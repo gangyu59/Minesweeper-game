@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" defer></script>
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker Registered'))
+            .catch(error => console.error('Service Worker Registration failed:', error));
+        }
+    </script>
+</head>
+<body>
+    <h1>Minesweeper</h1>
+    <div id="game-container" style="display: flex; justify-content: center;">
+        <canvas id="game-canvas"></canvas>
+    </div>
+    <div id="controls" style="display: flex; flex-direction: column; align-items: center;">
+        <label for="difficulty-slider">难度：
+            <span id="difficulty-label">中等</span>
+        </label>
+        <input type="range" id="difficulty-slider" class="slider" min="1" max="5" value="3">
+    </div>
+    <button id="start-button">开始</button><br>
+    <button id="rules-button">游戏规则</button><br><br>
+    <div id="message"></div>
+
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>游戏规则</h2>
+            <p>在一个网格上隐藏了一些地雷，玩家需要点击格子来揭开非雷的格子。规则如下：</p>
+            <ul style="text-align: left;">
+                <li>点击一个格子来揭开它</li>
+                <li>数字表示邻近地雷的数量</li>
+                <li>如果点击到地雷，游戏结束</li>
+                <li>揭开所有非雷的格子获胜</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("rules-modal");
+        const btn = document.getElementById("rules-button");
+        const span = document.getElementsByClassName("close-button")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
