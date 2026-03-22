@@ -1,17 +1,38 @@
+const CACHE_NAME = 'minesweeper-cache-v2';
+
+const FILES_TO_CACHE = [
+    './index.html',
+    './style.css',
+    './main.js',
+    './manifest.json',
+    './service-worker.js'
+];
+
 self.addEventListener('install', (event) => {
+    // Force this SW to become active immediately, bypassing waiting
+    self.skipWaiting();
     event.waitUntil(
-        caches.open('minesweeper-cache').then((cache) => {
-            return cache.addAll([
-                './index.html',
-                './style.css',
-                './main.js',
-                './manifest.json',
-                './service-worker.js'
-                // Add other files you want to cache
-            ]);
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.addAll(FILES_TO_CACHE);
         }).catch(error => {
             console.error('Caching failed:', error);
         })
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    // Delete all old caches that don't match current version
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter(name => name !== CACHE_NAME)
+                    .map(name => {
+                        console.log('Deleting old cache:', name);
+                        return caches.delete(name);
+                    })
+            );
+        }).then(() => self.clients.claim())
     );
 });
 
